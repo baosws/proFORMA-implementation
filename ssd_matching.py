@@ -1,5 +1,7 @@
 import numpy as np
+import stable_marriage as sm
 
+INF = 10 ** 9
 def SSD_non_normalized(img_src, img_dst):
     ssd = 0
     h, w = img_src.shape
@@ -37,7 +39,27 @@ def SSD_patch_img(keypoints, patch, img):
 def SSD_img_img(kp_src, img_src, kp_dst, img_dst):
     n = len(kp_src)
     m = len(kp_dst)
-    src_prefers = [[0] * m for i in range(n)]
-    dst_prefers = [[0] * n for i in range(h)]
-    fo
-    
+    k = max(n, m)
+    patchtes_src = [get_sub_img(kp.pt, img_src, 3) for kp in kp_src]
+    patchtes_dst = [get_sub_img(kp.pt, img_dst, 3) for kp in kp_dst]
+    cost_mat = [[0] * k for i in range(k)]
+    for i in range(k):
+        for j in range(k):
+            if i < n and j < m:
+                cost_mat[i][j] = SSD_normalized(patchtes_src[i], patchtes_dst[j])
+            else:
+                cost_mat[i][j] = INF
+            
+    src_prefers = [[] for i in range(k)]
+    dst_prefers = [[] for i in range(k)]
+    for i in range(k):
+        for j in range(k):
+            src_prefers[i].append((cost_mat[i][j], j))
+            dst_prefers[i].append((cost_mat[j][i], j))
+        src_prefers[i].sort()
+        dst_prefers[i].sort()
+        for j in range(k):
+            src_prefers[i][j] = src_prefers[i][j][1]
+            dst_prefers[i][j] = dst_prefers[i][j][1]
+    matchX, matchY = sm.marry(src_prefers, dst_prefers)
+    return matchX, matchY, cost_mat

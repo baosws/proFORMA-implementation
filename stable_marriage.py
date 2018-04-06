@@ -20,19 +20,19 @@ def marry(men_prefers, women_prefers):
                     husbands[woman] = single_man
                     wives[single_man] = woman
                     break
-    return husbands, wives
-
-men_prefers = [[0, 2, 1, 3],
-               [2, 3, 0, 1],
-               [3, 1, 2, 0],
-               [2, 1, 0, 3]]
-
-women_prefers = [[1, 0, 2, 3],
-                 [3, 0, 1, 2],
-                 [0, 2, 1, 3],
-                 [1, 2, 0, 3]]
-
-husbands, wives = marry(men_prefers, women_prefers)
-
-for man in range(4):
-    print(man, wives[man])
+    return wives, husbands
+# 
+# men_prefers = [[0, 2, 1, 3],
+#                [2, 3, 0, 1],
+#                [3, 1, 2, 0],
+#                [2, 1, 0, 3]]
+# 
+# women_prefers = [[1, 0, 2, 3],
+#                  [3, 0, 1, 2],
+#                  [0, 2, 1, 3],
+#                  [1, 2, 0, 3]]
+# 
+# husbands, wives = marry(men_prefers, women_prefers)
+# 
+# for man in range(4):
+#     print(man, wives[man])

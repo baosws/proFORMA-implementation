@@ -1,7 +1,7 @@
 import numpy as np
 import cv2
 from matplotlib import pyplot as plt
-from ssd_matching import *
+import ssd_matching
 fig = plt.figure()
 
 def camera_capture():
@@ -24,20 +24,31 @@ def camera_capture():
 
 def fast_matching():
     fast = cv2.FastFeatureDetector_create(type = cv2.FastFeatureDetector_TYPE_7_12, nonmaxSuppression = True)
-    img_src = cv2.imread('./Pictures/Webcam/2018-04-03-104438.jpg', 0)
-    img_dst = cv2.imread('./Pictures/Webcam/2018-04-03-104449.jpg', 0)
+    img_src = cv2.imread('../Pictures/Webcam/2018-04-03-104438.jpg', 0)
+    img_dst = cv2.imread('../Pictures/Webcam/2018-04-03-104449.jpg', 0)
+
+    # half-sampling
+    img_src = cv2.resize(img_src, (0, 0), fx = 0.5, fy = 0.5)
+    img_dst = cv2.resize(img_dst, (0, 0), fx = 0.5, fy = 0.5)
+    
+    # get keypoints
     kp_src = fast.detect(img_src, None)
     kp_dst = fast.detect(img_dst, None)
 
-    img_src = cv2.drawKeypoints(img_src, kp_src, None)
-    img_dst = cv2.drawKeypoints(img_dst, kp_dst, None)
+    # matching
+    matchX, matchY, cost_mat = ssd_matching.SSD_img_img(kp_src, img_src, kp_dst, img_dst)
+    dmatch = [cv2.DMatch(i, matchX[i], cost_mat[i][matchX[i]]) for i in range(len(kp_src)) if matchX[i] < len(kp_dst)]
+    dmatch.sort(key = lambda x: x.distance)
+
+    # draw matches
+    img_res = cv2.drawMatches(img_src, kp_src, img_dst, kp_dst, dmatch[:100], None)
 #     img_dst = cv2.drawKeypoints(img_src, keypoints, None)
-    
-    fig.add_subplot(1, 2, 1)
-    plt.imshow(img_src)
-    fig.add_subplot(1, 2, 2)
-    plt.imshow(img_dst)
- 
+#     
+#     fig.add_subplot(1, 2, 1)
+#     plt.imshow(img_src)
+#     fig.add_subplot(1, 2, 2)
+#     plt.imshow(img_dst)
+    plt.imshow(img_res)
 #     ssd_img = SSD_keypoint(keypoints, get_sub_img(keypoints[10].pt, img_src, 3), img_src)
 #     for point, ssd in zip(keypoints, ssd_img):
 #         print(point.pt, ssd)
