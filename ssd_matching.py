@@ -43,7 +43,7 @@ def SSD_img_img(kp_src, img_src, kp_dst, img_dst):
     n, m = len(kp_src), len(kp_dst)
     k = max(n, m)
     diameter = 3
-    max_dist = 10
+    max_dist = 25
     patchtes_src = [get_sub_img(kp.pt, img_src, diameter) for kp in kp_src]
     patchtes_dst = [get_sub_img(kp.pt, img_dst, diameter) for kp in kp_dst]
     cost_mat = [[0] * k for i in range(k)]
