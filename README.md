@@ -11,6 +11,8 @@ Tracking on 2 images:
 - Two set of keypoints are matched using stable marriage algorithm (https://en.wikipedia.org/wiki/Stable_marriage_problem), using SSD (http://www.cse.psu.edu/~rtc12/CSE486/lecture07.pdf) as cost function between two keypoints.
 
 Some results:
-
 ![](results/Screenshot1.png)
-![](results/Screenshot from 2018-04-06 17-24-36.png)
+![](results/Screenshot2.png)
+![](results/Screenshot3.png)
+![](results/Screenshot4.png)
+![](results/Screenshot5.png)
