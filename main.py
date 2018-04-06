@@ -21,15 +21,21 @@ def camera_capture():
 
     cap.release()
 
+def normalized(img):
+    img = cv2.resize(img, (0, 0), fx = 0.5, fy = 0.5)
+    kernel_size = 2
+    kernel = np.ones((kernel_size, kernel_size), np.float32) / (kernel_size ** 2)
+    img = cv2.filter2D(img, -1, kernel)
+    return img
 
 def fast_matching():
     fast = cv2.FastFeatureDetector_create(type = cv2.FastFeatureDetector_TYPE_7_12, nonmaxSuppression = True)
-    img_src = cv2.imread('../Pictures/Webcam/2018-04-03-104438.jpg', 0)
-    img_dst = cv2.imread('../Pictures/Webcam/2018-04-03-104449.jpg', 0)
+    img_src = cv2.imread('./P_20180406_171031.jpg', 0)
+    img_dst = cv2.imread('./P_20180406_171029.jpg', 0)
 
     # half-sampling
-    img_src = cv2.resize(img_src, (0, 0), fx = 0.5, fy = 0.5)
-    img_dst = cv2.resize(img_dst, (0, 0), fx = 0.5, fy = 0.5)
+    img_src = normalized(img_src)
+    img_dst = normalized(img_dst)
     
     # get keypoints
     kp_src = fast.detect(img_src, None)
@@ -41,7 +47,7 @@ def fast_matching():
     dmatch.sort(key = lambda x: x.distance)
 
     # draw matches
-    img_res = cv2.drawMatches(img_src, kp_src, img_dst, kp_dst, dmatch[:100], None)
+    img_res = cv2.drawMatches(img_src, kp_src, img_dst, kp_dst, dmatch[:50], outImg = None, flags = 2)
 #     img_dst = cv2.drawKeypoints(img_src, keypoints, None)
 #     
 #     fig.add_subplot(1, 2, 1)

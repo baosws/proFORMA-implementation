@@ -36,16 +36,20 @@ def SSD_patch_img(keypoints, patch, img):
     return [SSD_normalized(patch, get_sub_img(point.pt, img, 3))
             for point in keypoints]
 
+def distance(ptA, ptB):
+    return ((ptA[0] - ptB[0]) ** 2 + (ptA[1] - ptB[1]) ** 2) ** 0.5
+
 def SSD_img_img(kp_src, img_src, kp_dst, img_dst):
-    n = len(kp_src)
-    m = len(kp_dst)
+    n, m = len(kp_src), len(kp_dst)
     k = max(n, m)
-    patchtes_src = [get_sub_img(kp.pt, img_src, 3) for kp in kp_src]
-    patchtes_dst = [get_sub_img(kp.pt, img_dst, 3) for kp in kp_dst]
+    diameter = 3
+    max_dist = 10
+    patchtes_src = [get_sub_img(kp.pt, img_src, diameter) for kp in kp_src]
+    patchtes_dst = [get_sub_img(kp.pt, img_dst, diameter) for kp in kp_dst]
     cost_mat = [[0] * k for i in range(k)]
     for i in range(k):
         for j in range(k):
-            if i < n and j < m:
+            if i < n and j < m and distance(kp_src[i].pt, kp_dst[j].pt) < max_dist:
                 cost_mat[i][j] = SSD_normalized(patchtes_src[i], patchtes_dst[j])
             else:
                 cost_mat[i][j] = INF
