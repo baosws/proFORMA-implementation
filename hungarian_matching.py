@@ -1,6 +1,5 @@
 import queue
 
-# return iff a augmenting path is found
 def bfs(adj, fx, fy, matchX, matchY, pre):
     n = len(adj)
     q = queue.Queue()
@@ -28,7 +27,7 @@ def enlarge(src, matchX, matchY, pre):
         u = pre[v]
         old_matchX = matchX[u]
         matchX[u], matchY[v] = v, u
-        v old_matchX
+        v = old_matchX
 
 def update(src, adj, fx, fy, pre):
     n = len(adj)
