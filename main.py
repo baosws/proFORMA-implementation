@@ -1,7 +1,7 @@
 import numpy as np
 import cv2
 from matplotlib import pyplot as plt
-import ssd_matching
+import matcher
 fig = plt.figure()
 
 def camera_capture():
@@ -32,8 +32,8 @@ def normalized(img):
 
 def fast_matching():
     fast = cv2.FastFeatureDetector_create(type = cv2.FastFeatureDetector_TYPE_7_12, nonmaxSuppression = True)
-    img_src = cv2.imread('./resource/2018-04-03-104438.jpg', 0)
-    img_dst = cv2.imread('./resource/2018-04-03-104449.jpg', 0)
+    img_src = cv2.imread('./resource/P_20180407_120033.jpg', 0);
+    img_dst = cv2.imread('./resource/P_20180407_120034.jpg', 0);
 
     # normalize
     img_src = normalized(img_src)
@@ -44,12 +44,12 @@ def fast_matching():
     kp_dst = fast.detect(img_dst, None)
 
     # matching
-    matchX, matchY, cost_mat = ssd_matching.SSD_img_img(kp_src, img_src, kp_dst, img_dst)
+    matchX, matchY, cost_mat = matcher.stable_SSD(img_src, kp_src, img_dst, kp_dst, max_dist = 25)
     dmatch = [cv2.DMatch(i, matchX[i], cost_mat[i][matchX[i]]) for i in range(len(kp_src)) if matchX[i] < len(kp_dst)]
     dmatch.sort(key = lambda x: x.distance)
     
     # draw matches
-    img_res = cv2.drawMatches(img_src, kp_src, img_dst, kp_dst, dmatch[:int(0.5 * len(dmatch))], outImg = None, flags = 2)
+    img_res = cv2.drawMatches(img_src, kp_src, img_dst, kp_dst, dmatch[:int(0.2 * len(dmatch))], outImg = None, flags = 2)
      
 #     fig.add_subplot(1, 2, 1)
 #     plt.imshow(img_src)

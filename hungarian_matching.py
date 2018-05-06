@@ -1,7 +1,8 @@
 import queue
+INF = 10 ** 9
 
-def bfs(adj, fx, fy, matchX, matchY, pre):
-    n = len(adj)
+def bfs(cost_mat, fx, fy, matchX, matchY, pre):
+    n = len(cost_mat)
     q = queue.Queue()
     for u in range(n):
         if matchX[u] == -1:
@@ -11,7 +12,7 @@ def bfs(adj, fx, fy, matchX, matchY, pre):
         pre[i] = -1
     while not q.empty():
         u = q.get()
-        for v, w in adj[u]:
+        for v, w in zip(range(n), cost_mat[u]):
             if pre[v] == -1 and w - fx[u] - fy[v] == 0:
                 pre[v] = u
                 if matchY[v] == -1:
@@ -29,8 +30,8 @@ def enlarge(src, matchX, matchY, pre):
         matchX[u], matchY[v] = v, u
         v = old_matchX
 
-def update(src, adj, fx, fy, pre):
-    n = len(adj)
+def update(src, cost_mat, fx, fy, matchY, pre):
+    n = len(cost_mat)
     visitedX = [False] * n
     visitedY = [False] * n
     visitedX[src] = True
@@ -41,7 +42,7 @@ def update(src, adj, fx, fy, pre):
     delta = INF
     for u in range(n):
         if visitedX[u]:
-            for v, w in adj[u]:
+            for v, w in zip(range(n), cost_mat[u]):
                 if not visitedY[v]:
                     delta = min(delta, w - fx[u] - fy[v])
 
@@ -52,8 +53,8 @@ def update(src, adj, fx, fy, pre):
         if visitedY[v]:
             fy[v] -= delta
 
-def hungarian_match(adj):
-    n = len(graph)
+def hungarian_match(cost_mat):
+    n = len(cost_mat)
     fx = [0] * n
     fy = [0] * n
     matchX = [-1] * n
@@ -61,9 +62,9 @@ def hungarian_match(adj):
     pre = [-1] * n
     for i in range(n):
         while True:
-            u = bfs(adj, fx, fy, matchX, matchY, pre)
+            u = bfs(cost_mat, fx, fy, matchX, matchY, pre)
             if u == -1:
-                update(i, adj, fx, fy, pre)
+                update(i, cost_mat, fx, fy, matchY, pre)
             else:
                 enlarge(u, matchX, matchY, pre)
                 break
@@ -71,4 +72,4 @@ def hungarian_match(adj):
     for i in range(n):
         cost += fx[i] + fy[i]
 
-    return cost, matchX, matchY
+    return matchX, matchY
